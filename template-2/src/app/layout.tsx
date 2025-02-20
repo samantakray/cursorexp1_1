@@ -1,4 +1,10 @@
 import "./globals.css";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'AI Image Generator',
+  description: 'Generate amazing images using AI',
+};
 
 export default function RootLayout({
   children,
@@ -7,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="bg-gray-50">{children}</body>
     </html>
   );
 }
