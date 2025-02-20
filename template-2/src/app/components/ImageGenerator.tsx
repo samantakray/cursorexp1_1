@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useAuth } from '../../lib/hooks/useAuth';
+import { saveGeneratedImage } from '../../lib/firebase/images';
 
 export default function ImageGenerator() {
+  const { user } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,12 @@ export default function ImageGenerator() {
       }
 
       setImageUrl(data.imageUrl);
+
+      // Save the image to the user's library if they're signed in
+      if (user) {
+        await saveGeneratedImage(user.uid, data.imageUrl, prompt);
+      }
+
       setPrompt(''); // Clear the prompt after successful generation
     } catch (err) {
       console.error('Error:', err);
@@ -71,6 +80,11 @@ export default function ImageGenerator() {
         >
           {loading ? 'Generating... (this may take up to 30 seconds)' : 'Generate Image'}
         </button>
+        {!user && (
+          <p className="text-sm text-gray-500 text-center mt-2">
+            Sign in to save your generated images to your library
+          </p>
+        )}
       </form>
 
       {error && (
